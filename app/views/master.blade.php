@@ -91,7 +91,7 @@
 	
 		<div class="container">
 
-			<h1>Images Support Reporting Tool</h1>
+			<h1>[ I ]  Images Support Reporting Tool: BETA v0.1</h1>
 			
 			<nav>
 
@@ -109,7 +109,9 @@
 					
 					@elseif (Auth::user()->type == 'admin')	
 					
-					<li><a href=""></a></li>
+					<li><a href="dashboard">Dashboard</a></li>
+
+					<li><a href="report">Reporting</a></li>
 					
 					@endif
 					

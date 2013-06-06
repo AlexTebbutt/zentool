@@ -21,11 +21,39 @@ class AdminController extends BaseController {
      */
     public function index()
     {
-    	//Pretty sure this isn't being used. Remove during tidy up.
-    	$organisation = Organisation::all();
-    	$organisation->dateTo = date('d-m-Y');
-			$tickets = NULL;
-    	$this->layout->content = View::make('admin.report', compact('organisation','tickets'));    
+			//Set up vars
+			$organisation = Organisation::all();
+			$data = NULL;
+			$content = new stdClass();
+			
+			//Loop through organistaions
+			foreach($organisation as $org)
+			{
+
+				$result = Organisation::where('id', $org->id)->first(array('name'));
+				$content->name = $result->name;
+				//Get open tickets
+				$content->closedTickets = Ticket::where('id', $org->id)->where('updatedAt','>=','2013-01-01 00:00:00')->where('updatedAt','<=','2013-06-01 23:59:59')->count();
+				//Get closed tickets
+				$content->openTickets = Ticket::where('id', $org->id)->where('updatedAt','>=','2013-01-01 00:00:00')->where('updatedAt','<=','2013-06-01 23:59:59')->count();
+				//Get time used this month
+				$content->totalTime = $this->formatTime(Ticket::where('id', $org->id)->where('updatedAt','>=','2013-01-01 00:00:00')->where('updatedAt','<=','2013-06-01 23:59:59')->sum('time'));
+				
+				$data .= View::make('admin.components.orgwidget');
+				
+			}
+			
+
+			
+			
+			
+			
+			
+			//Generate widget
+			
+    
+    	$this->layout->content = View::make('admin.index');    
+
     }
 
 		public function getReport()
@@ -53,6 +81,8 @@ class AdminController extends BaseController {
 			$report->dateTo = date('d-m-Y');
 			$result = Organisation::where('id', $report->orgID)->first(array('name'));
 			$report->orgName = $result->name;
+			$data = NULL;
+			$headings = new stdClass();
 			
 			//Get organisations for drop down
 			$organisation = Organisation::all();
@@ -89,10 +119,7 @@ class AdminController extends BaseController {
 			}
 
 			//Loop through tickets month by month, build the ticket section of the report
-			$data = NULL;
-			$headings = new stdClass();
-			
-			
+		
 			for ($dateRangeFrom = $dateFrom; $dateRangeFrom <= $reportDateTo; )
 			{
 			

@@ -168,6 +168,9 @@ body {
 	font-family: 'Open Sans', sans-serif;
 }
 
+header h1 {
+	font-weight: normal;
+}
 
 h2 {
 	font-size: 17px;

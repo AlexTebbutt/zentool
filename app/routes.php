@@ -31,6 +31,8 @@ Route::get('admin',function(){
 	
 });
 
+Route::get('admin/dashboard','AdminController@index'); 
+
 //Route::get('organisations', 'OrganisationsController@index');
 
 Route::get('organisations', function(){
