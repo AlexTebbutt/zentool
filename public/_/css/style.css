@@ -1,0 +1,283 @@
+/* Apply a natural box layout model to all elements: http://paulirish.com/2012/box-sizing-border-box-ftw/ */
+* { -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; }
+
+.chromeframe {position: absolute; top: 0;}
+
+/* Ok, this is where the fun starts.
+-------------------------------------------------------------------------------*/
+
+/* A Linux- and Windows-friendly sans-serif font stack: http://prospects.mhurrell.co.uk/post/updating-the-helvetica-font-stack */
+body {font: 13px Helmet, Freesans, sans-serif;}
+
+/* Using local fonts? Check out Font Squirrel's webfont generator: http://www.fontsquirrel.com/tools/webfont-generator */
+
+/* We like off-black for text. */
+body, select, input, textarea {color: #333;}
+
+a {color: #03f;}
+a:hover {color: #69f;}
+
+/* Custom text-selection colors (remove any text shadows: http://twitter.com/miketaylr/status/12228805301) */
+::-moz-selection{background: #fcd700; color: #fff; text-shadow: none;}
+::selection {background: #fcd700; color: #fff; text-shadow: none;} 
+
+/*	j.mp/webkit-tap-highlight-color */
+a:link {-webkit-tap-highlight-color: #fcd700;} 
+
+ins {background-color: #fcd700; color: #000; text-decoration: none;}
+mark {background-color: #fcd700; color: #000; font-style: italic; font-weight: bold;}
+
+/* Mozilla dosen't style place holders by default */
+input:-moz-placeholder { color:#a9a9a9; }
+textarea:-moz-placeholder { color:#a9a9a9; }
+
+/* Layout
+-------------------------------------------------------------------------------*/
+body {
+/* 	background-color: rgb(245,245,245); */
+	background-color: rgb(255,255,255);
+}
+
+header{
+	background-color: rgb(0,0,0);
+	color: rgb(255,255,255);
+	padding-top: 20px;
+	height: 60px;
+}
+
+footer {
+	background-color: rgb(0,0,0);
+	bottom: 0;	
+	color: rgb(255,255,255);
+	height: 40px;
+	position: fixed;
+	width: 100%;
+}
+
+li {
+	display: inline;
+	padding-right: 10px;
+}
+
+li:last-child {
+	padding-right: 0;
+}
+
+td {
+	height: 20px;
+}
+
+/* Classes */
+.block {
+	display: inline-block;
+}
+
+.hide-months {
+	margin: 5px 0;
+}
+
+.hide-months label {
+	margin-left: 4px;
+}
+
+.hide-months input[type=checkbox] {
+	margin-top: -4px;
+	vertical-align: middle;
+}
+
+.container{
+	margin: 0 auto;
+	width: 960px;	
+}
+
+.content {
+	padding-bottom: 100px;
+}
+
+.left {
+	float: left;
+}
+
+.login {
+	background-color: rgb(255,255,255);
+	border: 1px solid rgb(225,225,225);
+	border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	box-shadow: 0 1px 2px rgba(0,0,0,.05);
+	-webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+	-moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+	margin: 20px auto;
+	padding: 20px;
+	max-width: 300px;
+}
+
+
+#report-summary {
+	background-color: rgb(205,205,205);
+}
+
+
+.month-heading {
+	background-color: rgb(235,235,235);
+}
+
+.month-heading, #report-summary {
+	border-radius: 8px;
+	margin: 20px 0 10px 0;
+	padding: 15px;	
+	width: 100%;
+}
+
+.month-heading:first-child {
+	margin: 10px 0 10px 0;
+}
+
+.right {
+	float: right;
+}
+
+.open-button {
+	margin-top: -8px;
+	font-size: 30px;
+	-moz-transition: -moz-transform 2s;
+	-webkit-transition: -webkit-transform 2s;
+	-o-transition: -o-transform 2s;
+	transition: transform 2s; 
+ }
+
+
+.open-button:hover {
+  -moz-transform:rotate(135deg);
+  -webkit-transform:rotate(135deg);
+  -o-transform:rotate(135deg);
+  transform:rotate(135deg);
+ }
+
+
+.open-button a {
+	color: rgb(222,70,4);
+}
+
+/* Typography
+-------------------------------------------------------------------------------*/
+
+/* Groups
+--------- */
+body {
+	font-family: 'Open Sans', sans-serif;
+}
+
+
+h2 {
+	font-size: 17px;
+	font-weight: bold;
+}
+
+h3 {
+	font-size: 17px;
+}
+
+#report-summary h2 {
+	font-size: 20px;
+	padding-bottom: 8px;
+}
+
+
+label {
+	display: block;
+	font-size: 15px;
+	font-weight: bold;
+	line-height: 18px;
+	margin-bottom: 5px;
+}
+
+header h1 {
+	float: left;
+}
+
+header nav {
+	float: right;
+}
+
+nav a {
+	color: rgb(255,255,255);
+}
+
+select, input[type=text], input[type=password] {
+	background-color: rgb(255,255,255);
+	border: 1px solid rgb(200,200,200);
+	border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	height: 30px;
+	margin-bottom: 10px;
+	padding: 3px;
+	width: 200px;
+}
+
+a {
+	color: #0088cc;
+	text-decoration: none;
+}
+
+/* classes */
+.form-title {
+	border-bottom: 1px solid rgb(225,225,225);
+	font-size: 21px;
+	margin-bottom: 15px;
+	padding-bottom: 20px
+	width: 100%;
+}
+
+.form-button {
+	color: rgb(255,255,255);
+	background-color: rgb(27, 211, 13);
+	border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff0088cc', endColorstr='#ff0044cc', GradientType=0);
+	filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+	border-radius: 6px;
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15)
+	-webkit-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+	-moz-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+	font-size: 17.5px;
+	line-height: 20px;
+	outline: 0;
+	padding: 11px 19px;
+	text-align: center;
+	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+	vertical-align: middle;
+}
+
+.form-button:hover {
+	background-color: rgb(38, 197, 27);
+	-webkit-transition: background-color 0.2s linear;
+	-moz-transition: background-color 0.2s linear;
+	-o-transition: background-color 0.2s linear;
+	transition: background-color 0.2s linear;
+}
+
+.center {
+	text-align: center;
+	width: 100%;
+}
+
+
+/* Print styles!
+-------------------------------------------------------------------------------*/
+@media print {
+
+
+
+}
+
+
+/* Media queries!
+-------------------------------------------------------------------------------*/
+
+@media screen and (max-width: 480px) {
+	
+		
+}
