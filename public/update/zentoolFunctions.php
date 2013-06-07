@@ -139,8 +139,10 @@ function updateTickets($organisationID = null)
 			foreach ($data->tickets as $ticket)
 			{
 				$i++;
+/*
 				if($ticket->status == 'closed')
 				{
+*/
 				
 					//Check to see if ticker has been added already
 					$sql = 'SELECT COUNT(*) FROM tickets WHERE id = "' . $ticket->id . '"';
@@ -161,7 +163,7 @@ function updateTickets($organisationID = null)
 					
 					$totalTime = $totalTime + $ticket->custom_fields[1]->value;
 	
-				}
+/* 				} */
 			}
 			$page++;
 			set_time_limit(360);
@@ -238,6 +240,68 @@ function convertTime($time)
 	
 }
 
+/*
+function updateTickets($organisationID = null)
+{
 
+	try 
+	{
+		$DB = new PDO('mysql:host=127.0.0.1;dbname=reporting', 'reporting_user', 'report01!!'); 
+		
+		$page=1;
+		$i = 0;		
+	
+		while (($i == 0 && $page == 1) || ($i%100 == 0 && $i != 0))
+		{
+			$data = curlWrap('/organizations/' . $organisationID . '/tickets.json?page=' . $page, null, 'GET');
+			$OK = TRUE;
+			
+			//print_r($data);
+	
+			foreach ($data->tickets as $ticket)
+			{
+				$i++;
+				if($ticket->status == 'closed')
+				{
+				
+					//Check to see if ticker has been added already
+					$sql = 'SELECT COUNT(*) FROM tickets WHERE id = "' . $ticket->id . '"';
+					$result = $DB->query($sql);
+					$count = $result->fetch(PDO::FETCH_NUM);
+	
+	
+					if ($count[0] == 0)
+					{
+						$ticketUrl = 'https://imagesandco.zendesk.com/tickets/' . $ticket->id;
+						
+						$sql = 'INSERT INTO 
+										tickets (id,organisationID,requesterID,assigneeID,jsonURL,url,subject,status,time,createdAt,updatedAt) 
+										VALUES ("' . $ticket->id . '","' . $ticket->organization_id . '","' . $ticket->requester_id . '","'  . $ticket->assignee_id . '","' . $ticket->url . '","' . $ticketUrl . '","' . $ticket->subject . '","' . $ticket->status . '","' . $ticket->custom_fields[1]->value . '","' . date('Y-m-d H:i:s', strtotime($ticket->created_at)) . '","' . date('Y-m-d H:i:s', strtotime($ticket->updated_at)) . '")';		
+						echo $sql . '<br />';
+						$DB->query($sql);
+					}
+					
+					$totalTime = $totalTime + $ticket->custom_fields[1]->value;
+	
+				}
+			}
+			$page++;
+			set_time_limit(360);
+		}
+	}
+
+	catch(PDOException $e) 
+	{  
+    echo $e->getMessage();  
+  }
+
+  echo 'Tickets Processed: ' . $i;
+	//Update time on account if needed
+	if($totalTime > 0) updateAccount($organisationID, $totalTime);
+
+	return $i;
+
+}
+*/
 
 ?>

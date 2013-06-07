@@ -1,12 +1,12 @@
-<div class="month-heading">
+<div class="month-heading {{ $headings->classTitle }}">
 
-	<h2>{{ $headings->count }} Ticket(s) closed in {{ $headings->monthTitle }} taking {{ $headings->totalTime }}<div class="open-button right"><a href="">+</a></div></h2>
+	<h2>{{ $headings->reportTitle }}<div class="open-button right"><a href="">+</a></div></h2>
 	
 </div>
 
 @if($headings->count > 0)
 
-	<table><thead><th align="center">Ticket #</th><th align="left">Closed On</th><th align="left">Task</th><th align="center">Time Taken (m)</th><th align="center">Status</th></thead>
+	<table><thead><th align="center">Ticket #</th><th align="left">{{ $headings->updateTitle }}</th><th align="left">Task</th><th align="center">Time Taken (m)</th><th align="center">Status</th></thead>
 	
 	@foreach($tickets as $ticket)
 		<tr>

@@ -1,6 +1,6 @@
 @section('content')
 
-{{ Form::open(array('method' => 'POST', 'class' => 'login')) }}
+{{ Form::open(array('method' => 'POST', 'class' => 'login', 'url' => 'admin/report')) }}
 
 <h1 class="form-title">Admin Reporting</h1>
 
@@ -59,9 +59,9 @@
 
 @endif
 
-<div class="block hide-months">
+<div class="report-options">
 
-@if(Input::get('hide-zero') == 'hide')
+@if($report->hideZero == 'hide')
 
 {{ Form::checkbox('hide-zero', 'hide', true) }}
 
@@ -73,6 +73,23 @@
 
 
 {{ Form::label('hide-zero', 'Hide months with no tickets', array('class' => 'block')) }}
+
+</div>
+
+<div class="report-options">
+
+@if($report->showOpen == 'show')
+
+{{ Form::checkbox('show-open', 'show', true) }}
+
+@else
+
+{{ Form::checkbox('show-open', 'show', false) }}
+
+@endif
+
+
+{{ Form::label('show-open', 'Show all open tickets', array('class' => 'block')) }}
 
 </div>
 

@@ -101,6 +101,8 @@
 
 					<li>Hello {{ Auth::user()->fullname }}</li>
 						
+					<li>&#183;</li>
+					
 					@if(Auth::user()->type == 'user')
 					
 					<li><a href="{{ URL::to('organisations') }}">Account Summary</a></li>
@@ -109,9 +111,9 @@
 					
 					@elseif (Auth::user()->type == 'admin')	
 					
-					<li><a href="dashboard">Dashboard</a></li>
+					<li><a href="{{ URL::to('admin/dashboard') }}">Dashboard</a></li>
 
-					<li><a href="report">Reporting</a></li>
+					<li><a href="{{ URL::to('admin/report') }}">Reporting</a></li>
 					
 					@endif
 					

@@ -27,11 +27,13 @@ Route::get('login','AuthController@index');
 //Route::get('admin','AdminController@getIndex');
 Route::get('admin',function(){
 	
-	return Redirect::to('admin/report');
+	return Redirect::to('admin/dashboard');
 	
 });
 
 Route::get('admin/dashboard','AdminController@index'); 
+
+Route::get('admin/organisation/{id}/report','AdminController@postReport');
 
 //Route::get('organisations', 'OrganisationsController@index');
 

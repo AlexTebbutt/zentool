@@ -59,11 +59,19 @@
 
 @endif
 
-<div class="block hide-months">
+<div class="report-options">
 
 {{ Form::checkbox('hide-zero', 'hide', true) }}
 
 {{ Form::label('hide-zero', 'Hide months with no tickets', array('class' => 'block')) }}
+
+</div>
+
+<div class="report-options">
+
+{{ Form::checkbox('show-open', 'show', true) }}
+
+{{ Form::label('show-open', 'Show all open tickets', array('class' => 'block')) }}
 
 </div>
 
