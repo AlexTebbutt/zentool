@@ -123,7 +123,7 @@ td {
 }
 
 .closed-summary {
-	background-color: rgba(255, 252, 235,1);
+	background-color: rgba(255, 250, 219,1);
 /* 	background-color: rgba(223,255,233,1);	 */
 }
 
@@ -370,8 +370,8 @@ a {
 }
 
 .green {
-	color: rgba(255, 239, 163,1);
-	background-color: rgba(255, 252, 235,1);
+	color: rgba(255, 235, 133,1);
+	background-color: rgba(255, 250, 219,1);
 /*
 	color: rgba(163, 235, 186,1);
  	background-color: rgba(223,255,233,1);
