@@ -13,7 +13,7 @@ class SiteController extends BaseController {
 //			return Redirect::to('login');    
     	if (Auth::check()) 
     	{
-	    	if (Auth::user()->type == 'administrator')
+	    	if (Auth::user()->type == 'admin' || Auth::user()->type == 'super')
 	    	{
 		    	
 		    	return Redirect::to('admin');

@@ -39,6 +39,7 @@ body {
 
 header{
 	background-color: rgb(0,0,0);
+	border-top: 4px solid rgb(155, 217, 243);
 	color: rgb(255,255,255);
 	padding-top: 20px;
 	height: 60px;
@@ -97,7 +98,7 @@ td {
 	float: left;
 }
 
-.login {
+.general-form {
 	background-color: rgb(255,255,255);
 	border: 1px solid rgb(225,225,225);
 	border-radius: 5px;
@@ -122,7 +123,8 @@ td {
 }
 
 .closed-summary {
-	background-color: rgba(223,255,233,1);	
+	background-color: rgba(255, 252, 235,1);
+/* 	background-color: rgba(223,255,233,1);	 */
 }
 
 .month-heading, #report-summary {
@@ -162,19 +164,30 @@ td {
 	color: rgba(0,0,0,1);
 }
 
-.organisation-widget {
-	background-color: rgba(231,231,231,1);
+.widget {
+	background-color: rgba(241,241,241,1);
 	border-radius: 10px;
 	-webkit-border-radius: 10px;
 	-moz-border-radius: 10px;
 	float: left;
 	height: 225px; 
-	margin-right: 20px;
-	margin-bottom: 20px;
-	width: 225px;
+	margin-right: 21px;
+	margin-bottom: 21px;
 }
 
-.organisation-widget:nth-child(4n+1) {
+.narrow {
+	width: 224px;	
+}
+
+.wide {
+	width: 306px;
+}
+
+.narrow:nth-child(4n+4) {
+	margin-right: 0;
+}
+
+.wide:nth-child(3n+1) {
 	margin-right: 0;
 }
 
@@ -191,7 +204,7 @@ body, .organisation-widget p.count span {
 }
 
 
-.organisation-widget p.count {
+.count {
 	font-family: 'Oswald', sans-serif;
 }
 
@@ -234,6 +247,10 @@ nav a {
 	color: rgb(255,255,255);
 }
 
+nav a:hover {
+	color: rgb(249, 159, 201);
+}
+
 select, input[type=text], input[type=password] {
 	background-color: rgb(255,255,255);
 	border: 1px solid rgb(200,200,200);
@@ -247,7 +264,7 @@ select, input[type=text], input[type=password] {
 }
 
 a {
-	color: #0088cc;
+	color: rgb(0, 136, 204);
 	text-decoration: none;
 }
 
@@ -294,16 +311,35 @@ a {
 	width: 100%;
 }
 
-.organisation-widget, .organisation-widget a, .organisation-widget a:hover {
-	color: rgba(72,72,72,1);
+.widget, .widget a, .widget a:hover {
+	color: rgba(100,100,100,1);
 }
 
-.organisation-widget h3 {
+.widget h3 {
 	font-size: 17px;
 	width: 100%;
 	text-align: center;
 	padding: 10px 0;
 }
+
+.totals-widget p {
+	border-bottom-left-radius: 10px;
+	border-bottom-right-radius: 10px;
+	-webkit-border-bottom-left-radius: 10px;
+	-webkit-border-bottom-right-radius: 10px;
+	-moz-border-bottom-left-radius: 10px;
+	-moz-border-bottom-right-radius: 10px;
+	font-size: 120px;
+	height: 182px;
+	text-align: center;
+}
+
+.totals-widget p.time {
+	font-size: 50px;
+	font-weight: bold;
+	line-height: 167px;
+}
+
 
 .organisation-widget p.count {
 	float: left;
@@ -334,8 +370,12 @@ a {
 }
 
 .green {
+	color: rgba(255, 239, 163,1);
+	background-color: rgba(255, 252, 235,1);
+/*
 	color: rgba(163, 235, 186,1);
-	background-color: rgba(223,255,233,1);
+ 	background-color: rgba(223,255,233,1);
+*/
 }
 
 /* Print styles!

@@ -1,37 +1,10 @@
 @section('content')
 
-{{ Form::open(array('method' => 'POST', 'class' => 'general-form', 'url' => 'admin/report')) }}
+{{ Form::open(array('method' => 'POST', 'class' => 'general-form')) }}
 
-<h1 class="form-title">Admin Reporting</h1>
+<h1 class="form-title">Reporting for {{ $report->orgName }}</h1>
 
-{{ Form::label('report-on', 'Report On') }}
-
-{{ Form::select('report-on', array('tbo' => 'Time By Organisation'), 'tbo') }}
-
-{{ Form::label('organisation-id', 'Organisation') }}
-
-<select id="organisation-id" name="organisation-id">
-@foreach($organisation as $org)
-	
-	<option 
-	
-	value="{{ $org->id }}" 
-	
-	@if($org->id == $report->orgID)
-	
-		{{ "selected" }}
-	
-	@endif
-	
-	>
-	{{ $org->name }}
-	
-	</option>
-
-@endforeach
-</select>
-
-{{ Form::label('report-type', 'Organisation') }}
+{{ Form::label('report-type', 'Report Type') }}
 
 {{ Form::select('report-type', array('all' => 'Full - All tickets', 'date-range' => 'By Date Range'), Input::get('report-type')) }}
 
@@ -43,9 +16,11 @@
 
 @else
 
-{{ Form::text('date-from', '01-01-2013') }}
+{{ Form::text('date-from', date('01-m-Y')) }}
 
 @endif
+
+
 
 {{ Form::label('date-to', 'Date To') }}
 
@@ -55,22 +30,13 @@
 
 @else
 
-{{ Form::text('date-to', $report->dateTo ) }}
+{{ Form::text('date-to', $organisation->dateTo ) }}
 
 @endif
 
 <div class="report-options">
 
-@if($report->hideZero == 'hide')
-
 {{ Form::checkbox('hide-zero', 'hide', true) }}
-
-@else
-
-{{ Form::checkbox('hide-zero', 'hide', false) }}
-
-@endif
-
 
 {{ Form::label('hide-zero', 'Hide months with no tickets', array('class' => 'block')) }}
 
@@ -78,16 +44,7 @@
 
 <div class="report-options">
 
-@if($report->showOpen == 'show')
-
 {{ Form::checkbox('show-open', 'show', true) }}
-
-@else
-
-{{ Form::checkbox('show-open', 'show', false) }}
-
-@endif
-
 
 {{ Form::label('show-open', 'Show all open tickets', array('class' => 'block')) }}
 

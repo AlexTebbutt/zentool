@@ -105,17 +105,24 @@
 					
 					@if(Auth::user()->type == 'user')
 					
-					<li><a href="{{ URL::to('organisations') }}">Account Summary</a></li>
+					<li><a href="{{ URL::to('organisations/dashboard') }}">Dashboard</a></li>
 					
-					<li><a href="{{ URL::to('organisations/report') }}">Report Tool</a></li>				
+					<li><a href="{{ URL::to('organisations/report') }}">Reporting</a></li>				
 					
-					@elseif (Auth::user()->type == 'admin')	
+					@elseif (Auth::user()->type == 'admin' || Auth::user()->type == 'super')	
 					
 					<li><a href="{{ URL::to('admin/dashboard') }}">Dashboard</a></li>
 
 					<li><a href="{{ URL::to('admin/report') }}">Reporting</a></li>
 					
+					@if(Auth::user()->type == 'super')
+					
+					<li><a href="{{ URL::to('admin/update') }}">Update</a></li>
+					
 					@endif
+					
+					@endif
+					
 					
 					<li><a href="{{ URL::to('logout') }}">Logout</a></li>
 			

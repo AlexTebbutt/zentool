@@ -1,8 +1,8 @@
-<div class="organisation-widget">
+<div class="widget narrow organisation-widget">
 
 	<a href="organisation/{{ $content->id }}/report">	
 		
-		<h3>{{ $content->name }}</h3>
+		<h3>{{ $content->title }}</h3>
 		
 		<p class="count blue">{{ $content->openTickets }}<span>open</span></p>
 		

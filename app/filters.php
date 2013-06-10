@@ -47,7 +47,7 @@ Route::filter('admin-auth', function()
 	if(Auth::check())
 	{
 		
-		if(Auth::user()->type != 'admin') {
+		if(Auth::user()->type != 'admin' && Auth::user()->type != 'super') {
 			
 			return Redirect::to('organisations');
 

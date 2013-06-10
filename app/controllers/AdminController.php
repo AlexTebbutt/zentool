@@ -26,24 +26,67 @@ class AdminController extends BaseController {
 			$data = NULL;
 			$content = new stdClass();
 			
+			
+			//Generate grand totals widgets
+			$content->title = "Total Open Tickets";
+			$content->count = Ticket::where(function($query)
+															{
+																$query->where('status', '!=', 'closed');
+																$query->where('status', '!=', 'solved');
+															})
+															->count();
+			$data .= View::make('admin.components.totalopenwidget', compact('content'));
+
+			$content->title = "Total Closed Tickets";
+			$content->count = Ticket::where(function($query)
+												{
+													$query->where('status', '=', 'closed');
+													$query->orWhere('status', '=', 'solved');
+												})
+												->where(function($query)
+												{
+													$query->where('updatedAt','>=',date('Y-m-01 00:00:00'));
+													$query->where('updatedAt','<=',date('Y-m-d 23:59:59'));
+												})
+												->count();
+
+			$data .= View::make('admin.components.totalclosedwidget', compact('content'));
+			
+			$content->title = "Total Time Spent";
+			$content->time = $this->formatTime(Ticket::where('updatedAt','>=',date('Y-m-01 00:00:00'))->where('updatedAt','<=',date('Y-m-d 23:59:59'))->sum('time'),'short');
+			$data .= View::make('admin.components.totaltimewidget', compact('content'));
+			
 			//Loop through organistaions
 			foreach($organisation as $org)
 			{
 
 				$result = Organisation::where('id', $org->id)->first(array('name'));
-				$content->name = $result->name;
+				$content->title = $result->name;
 				$content->id = $org->id;
 				
 				//Get closed tickets
-				$content->closedTickets = Ticket::where('organisationID', $org->id)->where('updatedAt','>=',date('Y-m-01 00:00:00'))->where('updatedAt','<=',date('Y-m-d 23:59:59'))->where('status','closed')->count();
-/*
-						  $queries = DB::getQueryLog();
-			$last_query = end($queries);
-	
-			var_dump($last_query);
-*/
+				$content->closedTickets = Ticket::where('organisationID', $org->id)
+																					->where(function($query)
+																					{
+																						$query->where('status', '=', 'closed');
+																						$query->orWhere('status', '=', 'solved');
+																					})
+																					->where(function($query)
+																					{
+																						$query->where('updatedAt','>=',date('Y-m-01 00:00:00'));
+																						$query->where('updatedAt','<=',date('Y-m-d 23:59:59'));
+																					})
+																					->count();
+
 				//Get open tickets
-				$content->openTickets = Ticket::where('organisationID', $org->id)->where('status','!=','closed')->count();
+				$content->openTickets = Ticket::where('organisationID', $org->id)
+																			->where(function($query)
+																			{
+																				$query->where('status', '!=', 'closed');
+																				$query->where('status', '!=', 'solved');
+																			})
+																			->count();
+																			
 				//Get time used this month
 				$content->totalTime = $this->formatTime(Ticket::where('organisationID', $org->id)->where('updatedAt','>=',date('Y-m-01 00:00:00'))->where('updatedAt','<=',date('Y-m-d 23:59:59'))->sum('time'));
 				
@@ -83,11 +126,14 @@ class AdminController extends BaseController {
 				$report->orgID = $id;
 				$report->showOpen = 'show';
 				$report->hideZero = 'hide';
+				$report->type = 'date-range';
 			} else {
 				$report->orgID = Input::get('organisation-id');
 				$report->showOpen = Input::get('show-open');
 				$report->hideZero = Input::get('hide-zero');
+				$report->type = Input::get('report-type');
 			}
+			
 			$report->dateTo = date('d-m-Y');
 			$result = Organisation::where('id', $report->orgID)->first(array('name'));
 			$report->orgName = $result->name;
@@ -98,16 +144,34 @@ class AdminController extends BaseController {
 			$organisation = Organisation::all();
 
 			//Get open (status != 'closed') tickets
-/* 			if (Input::get('show-open') || $showOpen) */
 			if($report->showOpen == 'show')
 			{
 
-				$headings->count = Ticket::where('organisationID', $report->orgID)->where('status','!=','closed')->count();
-				$tickets = Ticket::where('organisationID', $report->orgID)->where('status','!=','closed')->orderBy('status')->get();					
-		
+				$headings->count = Ticket::where('organisationID', $report->orgID)
+																->where(function($query)
+																{
+																 	$query->where('status','!=','closed');
+																 	$query->Where('status','!=','solved');
+																})
+																->count();
+				$tickets = Ticket::where('organisationID', $report->orgID)
+													->where(function($query)
+													{
+													 	$query->where('status','!=','closed');
+													 	$query->Where('status','!=','solved');
+													})
+													->orderBy('status')
+													->get();					
+													
 				if ($headings->count > 0)
 				{
-					$headings->totalTime = $this->formatTime(Ticket::where('organisationID', $report->orgID)->where('status','!=','closed')->sum('time'));
+					$headings->totalTime = $this->formatTime(Ticket::where('organisationID', $report->orgID)
+																													->where(function($query)
+																													{
+																													 	$query->where('status','!=','closed');
+																													 	$query->Where('status','!=','solved');
+																													})
+																													->sum('time'));
 				} else {
 					$headings->totalTime = '0 Hours 0 Minutes';
 				}
@@ -121,7 +185,12 @@ class AdminController extends BaseController {
 
 			//Get all closed tickets within the date range and generate monthly views
 			//Set up report date ranges
-			if (Input::get('report-type') == 'date-range')
+			if ($report->type == 'date-range' && $id != NULL)
+			{
+				$reportDateFrom = date('Y-m-01');
+				$reportDateTo = date('Y-m-d');
+			}
+			elseif ($report->type == 'date-range')
 			{
 
 				$reportDateFrom = date('Y-m-d', strtotime(Input::get('date-from')));
@@ -131,12 +200,6 @@ class AdminController extends BaseController {
 
 				//It's a full report so set date range to first / last ticket date
 				$result = Ticket::where('organisationID', $report->orgID)->orderBy('updatedAt')->first(array('updatedAt'));
-/*
-		  $queries = DB::getQueryLog();
-			$last_query = end($queries);
-	
-			var_dump($last_query);
-*/
 
 				if ($result)
 				{
@@ -169,25 +232,54 @@ class AdminController extends BaseController {
 			}
 
 			//Loop through tickets month by month, build the ticket section of the report
-		
 			for ($dateRangeFrom = $dateFrom; $dateRangeFrom <= $reportDateTo; )
 			{
 			
 				//Get ticket count for date range
-				$headings->count = Ticket::where('organisationID', $report->orgID)->where('updatedAt','>=',$dateRangeFrom)->where('updatedAt','<=',$dateRangeTo . ' 23:59:59')->where('status','closed')->count();
+				$headings->count = Ticket::where('organisationID', $report->orgID)
+																	->where('updatedAt','>=',$dateRangeFrom)
+																	->where('updatedAt','<=',$dateRangeTo . ' 23:59:59')
+																	->where(function($query)
+																	{
+																	 	$query->where('status','=','closed');
+																	 	$query->orWhere('status','=','solved');
+																	})
+																	->count();
 				
-/* 				if((Input::get('hide-zero') != 'hide' && $headings->count == 0) ||  $headings->count > 0) */
 				if(($report->hideZero != 'hide' && $headings->count == 0) ||  $headings->count > 0)
 				{
 				
 					if ($headings->count > 0)
 					{
+						
 						//Get month time total
-						$headings->totalTime = $this->formatTime(Ticket::where('organisationID', $report->orgID)->where('updatedAt','>=',$dateRangeFrom)->where('updatedAt','<=',$dateRangeTo . ' 23:59:59')->where('status','closed')->sum('time'));
+						$headings->totalTime = $this->formatTime(Ticket::where('organisationID', $report->orgID)
+																														->where('updatedAt','>=',$dateRangeFrom)
+																														->where('updatedAt','<=',$dateRangeTo . ' 23:59:59')
+																														->where(function($query)
+																														{
+																														 	$query->where('status','=','closed');
+																														 	$query->orWhere('status','=','solved');
+																														})
+																														->sum('time'));
+
 						//Retrieve all tickets for date range
-						$tickets = Ticket::where('organisationID', $report->orgID)->where('updatedAt','>=',$dateRangeFrom)->where('updatedAt','<=',$dateRangeTo . ' 23:59:59')->orderBy('updatedAt', 'asc')->where('status','closed')->get();			
+						$tickets = Ticket::where('organisationID', $report->orgID)
+															->where('updatedAt','>=',$dateRangeFrom)
+															->where('updatedAt','<=',$dateRangeTo . ' 23:59:59')
+															->where(function($query)
+															{
+															 	$query->where('status','=','closed');
+															 	$query->orWhere('status','=','solved');
+															})
+															->orderBy('updatedAt', 'asc')
+															->get();	
+																	
+
 					} else {
+
 						$headings->totalTime = '0 Hours 0 Minutes';
+
 					}
 
 					$headings->classTitle = 'closed-summary';
@@ -205,17 +297,61 @@ class AdminController extends BaseController {
 			}
 		
 			//Get total time
-			$report->totalTime = $this->formatTime(Ticket::where('organisationID', $report->orgID)->where('updatedAt','>=',$reportDateFrom)->where('updatedAt','<=',$reportDateTo . ' 23:59:59')->sum('time'));
+			$report->totalTime = $this->formatTime(Ticket::where('organisationID', $report->orgID)
+																										->where('updatedAt','>=',$reportDateFrom)
+																										->where('updatedAt','<=',$reportDateTo . ' 23:59:59')
+																										->where(function($query)
+																										{
+																											
+																											$query->where('status','=','closed');
+																											$query->orWhere('status','=','solved');
+																											
+																										})
+																										->sum('time'));
+			
 			
 			//Get total ticket count
-			$report->totalCount = Ticket::where('organisationID', $report->orgID)->where('updatedAt','>=',$reportDateFrom)->where('updatedAt','<=',$reportDateTo . ' 23:59:59')->count();
+			$report->totalCount = Ticket::where('organisationID', $report->orgID)->where('updatedAt','>=',$reportDateFrom)->where('updatedAt','<=',$reportDateTo . ' 23:59:59')
+																		->where(function($query)
+																		{
+																			$query->where('status','=','closed');
+																			$query->orWhere('status','=','solved');
+																		})
+																		->count();
 			
 			//Generate view
 			$this->layout->content = View::make('reports.adminFull', array('organisation' => $organisation, 'report' => $report, 'data' => $data)); 	
 					
 		}
 		
-		private function formatTime($time)
+		public function getUpdate() 
+		{
+			
+			$this->layout->content = View::make('admin.showUpdate');
+			
+		}
+		
+		public function postUpdate() 
+		{
+		
+			//Process Organisations if required
+			if (Input::has('update-organisations') == 'update-organisations')
+			{
+				
+			}
+			
+			//Process Users if required
+			
+			//Process Tickets if required
+			
+			
+
+			
+			$this->layout->content = View::make('admin.processUpdate');
+			
+		}
+		
+		private function formatTime($time, $format = 'long')
 		{
 
 			$neg = '';
@@ -233,12 +369,26 @@ class AdminController extends BaseController {
 				
 			}
 		
-			return $neg . floor($time/60) . ' Hours ' . $neg . $time%60 . ' Minutes';
+			if ($format == 'long')
+			{
+				return $neg . floor($time/60) . ' Hours ' . $neg . $time%60 . ' Minutes';
+			} 
+			elseif ($format == 'short')
+			{
+				return $neg . floor($time/60) . ' H ' . $neg . $time%60 . ' M';
+			}
 			
 		}
 
 
+		private function checkQuery()
+		{
 
+			$queries = DB::getQueryLog();
+			$last_query = end($queries);
+			var_dump($last_query);
+			
+		}
 
 
 

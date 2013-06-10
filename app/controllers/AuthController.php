@@ -31,12 +31,12 @@ class AuthController extends BaseController {
   		if (Auth::attempt($user))
 			{
 				Session::put('type',Auth::user()->type);
-				if(Auth::user()->type == 'admin')
+				if(Auth::user()->type == 'admin' || Auth::user()->type == 'super')
 				{
-					return Redirect::to('admin');
+					return Redirect::to('admin/dashboard');
 				} else {
 					Session::put('organisationID', Auth::user()->organisationID);
-					return Redirect::to('organisations');
+					return Redirect::to('organisations/dashboard');
 				}
 			}
 			

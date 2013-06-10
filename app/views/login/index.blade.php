@@ -1,6 +1,6 @@
 @section('content')
 
-{{ Form::open(array('method' => 'POST', 'class' => 'login')) }}
+{{ Form::open(array('method' => 'POST', 'class' => 'general-form')) }}
 
 <h1 class="form-title">Login Page</h1>
 

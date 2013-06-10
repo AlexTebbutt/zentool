@@ -23,46 +23,54 @@ Route::get('/', 'SiteController@index');
 
 Route::get('login','AuthController@index');
 
-/* Uncomment once admin panel is built for the time being fgo straight to the report */
-//Route::get('admin','AdminController@getIndex');
+/*
+|--------------------------------------------------------------------------
+| Admin Pages
+|--------------------------------------------------------------------------
+*/
 Route::get('admin',function(){
 	
 	return Redirect::to('admin/dashboard');
 	
 });
 
+//Dashboard
 Route::get('admin/dashboard','AdminController@index'); 
 
+//Organisation report from dashboard
 Route::get('admin/organisation/{id}/report','AdminController@postReport');
 
-//Route::get('organisations', 'OrganisationsController@index');
-
-Route::get('organisations', function(){
-	
-	return Redirect::to('organisations/report');
-	
-});
-
-Route::get('organisations/report', 'OrganisationsController@getReport');
-
-Route::post('organisations/report', 'OrganisationsController@postReport');
-
-//Show super admin page
-//Route::resource('admin','AdminController@index');
-
-//Show super admin report page
-
-//Show organisation report page
+//Report form
 Route::get('admin/report', 'AdminController@getReport');
 
+//Report output
 Route::post('admin/report', 'AdminController@postReport');
 
-//Show tickets for an organisation
-Route::get('organisations/{id}/tickets', 'TicketsController@showTicketsByOrg');
+//Update form
+Route::get('admin/update','AdminController@getUpdate');
 
-//Show organisation account summary page
+//Do the update work
+Route::post('admin/update','AdminController@postUpdate');
 
-//Show organisation account history page
+/*
+|--------------------------------------------------------------------------
+| Organisation Pages
+|--------------------------------------------------------------------------
+*/
+Route::get('organisations', function(){
+	
+	return Redirect::to('organisations/dashboard');
+	
+});
+//Dashboard
+Route::get('organisations/dashboard','OrganisationsController@index'); 
+
+//Report form
+Route::get('organisations/report', 'OrganisationsController@getReport');
+
+//Report output
+Route::post('organisations/report', 'OrganisationsController@postReport');
+
 
 /*
 |--------------------------------------------------------------------------
