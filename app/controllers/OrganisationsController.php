@@ -33,8 +33,29 @@ class OrganisationsController extends BaseController {
 		$content->name = $result->name;
  
 		//Generate grand total widgets.
+		//Time spent this month
 		$content->title = "Time Spent in " . date('F');
-		$content->time = $this->formatTime(Ticket::where('organisationID', $organisationID)->where('updatedAt','>=',date('Y-m-01 00:00:00'))->where('updatedAt','<=',date('Y-m-d 23:59:59'))->sum('time'),'short');
+		
+		$content->time = Ticket::where('organisationID', $organisationID)
+										->where('updatedAt','>=',date('Y-m-01 00:00:00'))
+										->where('updatedAt','<=',date('Y-m-d 23:59:59'))
+										->where(function($query)
+											{
+												$query->where('status','=','closed');
+												$query->orWhere('status','=','solved');
+											})
+										->sum('time');
+				
+		//Open time tickets
+		$content->time = $content->time + Ticket::where('organisationID', $organisationID)
+																			->where(function($query)
+																				{
+																					$query->where('status','=','open');
+																					$query->orWhere('status','=','pending');
+																				})
+																			->sum('time');
+		
+		$content->time = $this->formatTime($content->time,'short');	
 		$data .= View::make('organisations.components.totaltimewidget', compact('content'));
 		
 		$content->title = "Tickets Closed in " . date('F');

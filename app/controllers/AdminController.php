@@ -13,6 +13,7 @@ class AdminController extends BaseController {
 		{
 			// Apply the  auth filter
 			$this->beforeFilter('admin-auth');
+			
 		}
 		/**
      * Display a listing of the resource.
@@ -88,8 +89,29 @@ class AdminController extends BaseController {
 																			->count();
 																			
 				//Get time used this month
-				$content->totalTime = $this->formatTime(Ticket::where('organisationID', $org->id)->where('updatedAt','>=',date('Y-m-01 00:00:00'))->where('updatedAt','<=',date('Y-m-d 23:59:59'))->sum('time'));
+/* 				$content->totalTime = $this->formatTime(Ticket::where('organisationID', $org->id)->where('updatedAt','>=',date('Y-m-01 00:00:00'))->where('updatedAt','<=',date('Y-m-d 23:59:59'))->sum('time')); */
+
+				//Closed ticket time
+				$content->totalTime = Ticket::where('organisationID', $org->id)
+														->where('updatedAt','>=',date('Y-m-01 00:00:00'))
+														->where('updatedAt','<=',date('Y-m-d 23:59:59'))
+														->where(function($query)
+															{
+																$query->where('status','=','closed');
+																$query->orWhere('status','=','solved');
+															})
+														->sum('time');
 				
+				//Open time tickets
+				$content->totalTime = $content->totalTime + Ticket::where('organisationID', $org->id)
+																					->where(function($query)
+																						{
+																							$query->where('status','=','open');
+																							$query->orWhere('status','=','pending');
+																						})
+																					->sum('time');
+				
+				$content->totalTime = $this->formatTime($content->totalTime);																	
 				$data .= View::make('admin.components.orgwidget', compact('content'));
 				
 			}
