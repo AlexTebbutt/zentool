@@ -16,11 +16,12 @@ class UsersTableSeeder extends Seeder {
         	'email' => 'alex.tebbutt@images.co.uk',
         	'password' => Hash::make('admin01!!'),
         	'active' => '1'),
+/*
         	array('id' => '2',
 					'organisationID' => '20733176',
         	'username' => 'rjb',
         	'fullname' => 'RJB Stone',
-        	'type' => 'user',
+        	'role' => 'end-user',
         	'email' => 'alex.tebbutt@images.co.uk',
         	'password' => Hash::make('test'),
         	'active' => '1'),
@@ -28,7 +29,7 @@ class UsersTableSeeder extends Seeder {
 					'organisationID' => '20627362',
         	'username' => 'james',
         	'fullname' => 'James Bennett',
-        	'type' => 'admin',
+        	'role' => 'agent',
         	'email' => 'james.bennett@images.co.uk',
         	'password' => Hash::make('pass123'),
         	'active' => '1'),
@@ -36,10 +37,11 @@ class UsersTableSeeder extends Seeder {
 					'organisationID' => '25096596',
         	'username' => 'camerich',
         	'fullname' => 'Camerich',
-        	'type' => 'user',
+        	'role' => 'end-user',
         	'email' => 'alex.tebbutt@images.co.uk',
         	'password' => Hash::make('test'),
-        	'active' => '1')      
+        	'active' => '1') 
+*/     
         );
 
         // Uncomment the below to run the seeder

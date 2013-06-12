@@ -334,7 +334,7 @@ class Application extends Container implements HttpKernelInterface, ResponsePrep
     }
     public static function getBootstrapFile()
     {
-        return '/Users/alex/Sites/Zentool/vendor/laravel/framework/src/Illuminate/Foundation' . '/start.php';
+        return '/Users/alex/Sites/zentool/vendor/laravel/framework/src/Illuminate/Foundation' . '/start.php';
     }
     public function startExceptionHandling()
     {
@@ -9936,7 +9936,7 @@ class PrettyPageHandler extends Handler
             return Handler::DONE;
         }
         if (!($resources = $this->getResourcesPath())) {
-            $resources = '/Users/alex/Sites/Zentool/vendor/filp/whoops/src/Whoops/Handler' . '/../Resources';
+            $resources = '/Users/alex/Sites/zentool/vendor/filp/whoops/src/Whoops/Handler' . '/../Resources';
         }
         $templateFile = "{$resources}/pretty-template.php";
         $cssFile = "{$resources}/pretty-page.css";

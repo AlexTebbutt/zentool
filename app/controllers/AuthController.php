@@ -31,7 +31,7 @@ class AuthController extends BaseController {
   		if (Auth::attempt($user))
 			{
 				Session::put('type',Auth::user()->type);
-				if(Auth::user()->type == 'admin' || Auth::user()->type == 'super')
+				if(Auth::user()->type == 'admin' || Auth::user()->type == 'agent')
 				{
 					return Redirect::to('admin/dashboard');
 				} else {

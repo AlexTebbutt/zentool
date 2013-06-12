@@ -83,4 +83,7 @@ Route::post('login', 'AuthController@postLogin');
 
 Route::get('logout','AuthController@getLogout');
 
+//Zendesk functions
+Route::get('admin/zendesk/test','ZendeskController@fetchUsers');
+
 ?>

@@ -103,19 +103,19 @@
 						
 					<li>&#183;</li>
 					
-					@if(Auth::user()->type == 'user')
+					@if(Auth::user()->type == 'end-user')
 					
 					<li><a href="{{ URL::to('organisations/dashboard') }}">Dashboard</a></li>
 					
 					<li><a href="{{ URL::to('organisations/report') }}">Reporting</a></li>				
 					
-					@elseif (Auth::user()->type == 'admin' || Auth::user()->type == 'super')	
+					@elseif (Auth::user()->type == 'admin' || Auth::user()->type == 'agent')	
 					
 					<li><a href="{{ URL::to('admin/dashboard') }}">Dashboard</a></li>
 
 					<li><a href="{{ URL::to('admin/report') }}">Reporting</a></li>
 					
-					@if(Auth::user()->type == 'super')
+					@if(Auth::user()->type == 'admin')
 					
 					<li><a href="{{ URL::to('admin/update') }}">Update</a></li>
 					
