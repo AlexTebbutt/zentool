@@ -8,14 +8,15 @@ class UsersTableSeeder extends Seeder {
     	// DB::table('users')->delete();
 
         $users = array(
-					array('id' => '1',
+					array('id' => '145777313',
 					'organisationID' => '20627362',
         	'username' => 'admin',
         	'fullname' => 'Alex Tebbutt',
         	'type' => 'admin',
         	'email' => 'alex.tebbutt@images.co.uk',
         	'password' => Hash::make('admin01!!'),
-        	'active' => '1'),
+        	'active' => '1',
+        	'zendeskUser' => '1' ),
 /*
         	array('id' => '2',
 					'organisationID' => '20733176',

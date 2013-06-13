@@ -21,6 +21,7 @@ class CreateUsersTable extends Migration {
             $table->string('email', 255);
             $table->string('password',100);
 						$table->boolean('active')->default(1);
+						$table->boolean('zendeskUser')->default(1);
 						$table->timestamp('createdAt');
         });
     }

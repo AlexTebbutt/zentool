@@ -22,7 +22,7 @@ class ZendeskController extends BaseController {
 	public function __construct()
 	{
 		// Apply the  auth filter
-		$this->beforeFilter('admin-auth');
+		//$this->beforeFilter('admin-auth');
 
 		//Get the Zendesk API account details and populate the variables
 		$zendeskAccount = Zendesk::find(1);
@@ -30,6 +30,7 @@ class ZendeskController extends BaseController {
 		$this->user = $zendeskAccount->user;
 		$this->base = 'https://' . $zendeskAccount->subdomain . '.zendesk.com/api/v2';
 		$this->suffix = $zendeskAccount->suffix;
+		$this->subdomain = $zendeskAccount->subdomain;
 
 	}
 
@@ -74,9 +75,10 @@ class ZendeskController extends BaseController {
 
 		$output = curl_exec($ch);
 		curl_close($ch);
-		$decoded = json_decode($output, true);
+		$decoded = json_decode($output);
 
 		return is_null($decoded) ? $output : $decoded;
+
 	}
 
 
@@ -88,52 +90,156 @@ class ZendeskController extends BaseController {
 	public function fetchUsers()
 	{
 		
-		//GET users from zendesk API and add NEW users to users table
-
-		$data = new stdClass();
-		$data = $this->call('/users','','GET');
+		//GET users from zendesk API and add NEW users to users table or UPDATE existing users.
+		$data = $this->call('/users',NULL,'GET');
 		
 		if (!$data) return FALSE;
 		
-		$user = new User;
 		$log = NULL;
-		$count = 0;
-
-		echo $data->users;
-		
-/*
+		$newUserCount = 0;
+		$count = 0;			
+				
 		foreach ($data->users as $row)
 		{
+
+			$user = User::find($row->id);
+	
+			if (!$user) $user = new User;
+
+			//var_dump($user);
 			
-			$user->organisationID = $row->organisation_id;
-			$user->username = $row->name;
-			$user->fullname = $row->name;
-			$user->type = $row->role;
-			$user->email = $row->email;
-
-			if($row->active == TRUE && $row->suspended == FALSE)
+			if(($row->active && $user->id == NULL) || ($row->active && $user->active))
 			{
-				$user->active = TRUE;
+							 	
+				if($user->id == NULL)
+				{
 
-			} else {
+					$password = (strtolower(str_replace(' ', '', $row->name))) . '01!!';
+					$user->password = Hash::make($password);
+					$newUserCount++;
+				 
+				} 
 
-				$user->active = FALSE;
-								
+				$user->id = $row->id;				 
+				if($row->organization_id != NULL) $user->organisationID = $row->organization_id;
+				
+				$user->fullname = $row->name;
+				$user->type = $row->role;
+				
+				if($row->email != NULL) 
+				{
+					$user->email = $row->email;
+					$user->username = $row->email;
+				} else {
+					$user->username = 'Username';
+				}
+	
+				if($row->suspended == FALSE)
+				{
+					$user->active = TRUE;
+	
+				} else {
+	
+					$user->active = FALSE;
+									
+				}
+	
+				$user->zendeskUser = TRUE;
+				$user->createdAt = $row->created_at;
+				$count++;
+				$user->save();
+
 			}
 			
-			$password = (str_replace(' ', '', $row->name)) . '01!!';
-			$user->password = $password;
-			$user->createdAt = $row->created_at;
-			
-			$user->save();
-			$count++;
-			
 		}
-*/
 
-		return $count . ' Users created';		
+		return '<p><strong>Users Updated: </strong>' . ($count - $newUserCount) . '</p><p><strong>Users Created: </strong> ' . $newUserCount . '</p>';		
 		
 	}
+	
+	public function fetchOrganisations()
+	{
+		
+		//GET users from zendesk API and add NEW users to users table or UPDATE existing users.
+		$data = $this->call('/organizations',NULL,'GET');
+		
+		if (!$data) return FALSE;
+		
+		$log = NULL;
+		$count = 0;			
+				
+		foreach ($data->organizations as $row)
+		{
+
+			$organisation = Organisation::find($row->id);
+			
+			if (!$organisation) 
+			{
+				
+				$organisation = new Organisation;
+				
+				$organisation->id = $row->id;
+				$organisation->name = $row->name;
+				$organisation->jsonUrl = $row->url;
+				$organisation->url = 'https://' . $this->subdomain . '.zendesk.com/organizations/' . $organisation->id;;
+				$organisation->active = TRUE;
+				$organisation->createdAt = $row->created_at;
+				$count++;
+				$organisation->save();
+			}	
+
+
+		}
+
+		return '<p><strong>Organisations Created: </strong>' . $count . '</p>';		
+		
+	}
+	
+	public function fetchTickets($organisationID = NULL)
+	{
+		
+		$url = NULL;
+		$page = 1;
+		$i = 0
+		
+		if($organisationID != NULL)
+		{
+
+			$urlPrefix = '/organizations/' . $organisationID . ''; 
+
+		}
+		
+		while(($i == 0 && $page == 1) || ($i%100 != 0 && $i != 0))
+		{
+		
+			$url = $urlPrefix . '/tickets.json?page=' . $page;
+			$data = $this->call($url,NULL,'GET'); 
+		
+			
+			foreach($data->tickets as $row)
+			{
+
+				//Check to see if ticket already exists
+				$ticket = Tickets::find($row->id);
+				
+				if(!$ticket) $ticket = new Ticket;
+				
+				//If the ticket exists and is closed, ignore
+				if($row->status == NULL || $ticket->status != 'closed')
+				{			
+				
+					
+				
+				}
+				
+			}
+		
+		
+		}
+		
+		
+	}
+	
 	
 
 }
