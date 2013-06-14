@@ -1,6 +1,6 @@
 <?php
 
-class AdminController extends BaseController {
+class AdminController extends ZendeskController {
 
 		protected $layout = 'master';
 		
@@ -12,6 +12,7 @@ class AdminController extends BaseController {
 		public function __construct()
 		{
 			// Apply the  auth filter
+			parent::__construct();
 			$this->beforeFilter('admin-auth');
 			
 		}
@@ -26,7 +27,6 @@ class AdminController extends BaseController {
 			$organisation = Organisation::where('active','1')->get();
 			$data = NULL;
 			$content = new stdClass();
-			
 			
 			//Generate grand totals widgets
 			$content->title = "Total Open Tickets";
@@ -356,22 +356,66 @@ class AdminController extends BaseController {
 		public function postUpdate() 
 		{
 		
+			$data = NULL;
+			 
 			//Process Organisations if required
 			if (Input::has('update-organisations') == 'update-organisations')
 			{
-				
+			
+				$data .= $this->fetchOrganisations();
+			 				 	
 			}
 			
 			//Process Users if required
+			if (Input::has('update-users') == 'update-users')
+			{
 			
+			 	$data .= $this->fetchUsers();
+			 	
+			}
+						
 			//Process Tickets if required
-			
-			
+			if (Input::has('update-tickets') == 'update-tickets')
+			{
+	
+			 	$data .= $this->fetchTickets();
+			 	
+			}			
 
 			
-			$this->layout->content = View::make('admin.processUpdate');
+			$this->layout->content = View::make('admin.processUpdate', array('data'=>$data));
 			
 		}
+		
+		
+		public function getOpenTickets()
+		{
+			
+			//Get all open tickets ordered by organistion and then date
+/*
+			$headings->count = Ticket::where(function($query)
+																{
+																 	$query->where('status','!=','closed');
+																 	$query->Where('status','!=','solved');
+																})
+																->count();
+			
+			$tickets = Ticket::where(function($query)
+												{
+												 	$query->where('status','!=','closed');
+												 	$query->Where('status','!=','solved');
+												})
+												->orderBy('organisationID')
+												->orderBy('updatedAt')
+												->get();	
+*/			
+			
+		
+			//Generate view
+			$this->layout->content = View::make('reports.adminOpen');
+			
+		}
+		
 		
 		private function formatTime($time, $format = 'long')
 		{

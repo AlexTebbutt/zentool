@@ -15,9 +15,6 @@ class ZendeskController extends BaseController {
 	|
 	*/
 
-	private $apiKey;
-	private $user;
-	private $subdomain;
 
 	public function __construct()
 	{
@@ -104,22 +101,11 @@ class ZendeskController extends BaseController {
 
 			$user = User::find($row->id);
 	
-			if (!$user) $user = new User;
-
-			//var_dump($user);
-			
-			if(($row->active && $user->id == NULL) || ($row->active && $user->active))
+			if (!$user && $row->active) 
 			{
-							 	
-				if($user->id == NULL)
-				{
-
-					$password = (strtolower(str_replace(' ', '', $row->name))) . '01!!';
-					$user->password = Hash::make($password);
-					$newUserCount++;
-				 
-				} 
-
+				
+				$user = new User;
+								 	
 				$user->id = $row->id;				 
 				if($row->organization_id != NULL) $user->organisationID = $row->organization_id;
 				
@@ -143,24 +129,28 @@ class ZendeskController extends BaseController {
 					$user->active = FALSE;
 									
 				}
+				$password = (strtolower(str_replace(' ', '', $row->name))) . '01!!';
+				$user->password = Hash::make($password);
+				$newUserCount++;
 	
 				$user->zendeskUser = TRUE;
 				$user->createdAt = $row->created_at;
-				$count++;
 				$user->save();
-
+	
 			}
+		
+			$count++;
 			
 		}
 
-		return '<p><strong>Users Updated: </strong>' . ($count - $newUserCount) . '</p><p><strong>Users Created: </strong> ' . $newUserCount . '</p>';		
+		return '<p><strong>Users Processed: </strong>' . $count . '</p><p><strong>Users Created: </strong> ' . $newUserCount . '</p>';		
 		
 	}
 	
-	public function fetchOrganisations()
+	public function fetchOrganisations($updateTickets = FALSE)
 	{
 		
-		//GET users from zendesk API and add NEW users to users table or UPDATE existing users.
+		//GET organisations from zendesk API and add NEW users to users table 
 		$data = $this->call('/organizations',NULL,'GET');
 		
 		if (!$data) return FALSE;
@@ -172,6 +162,7 @@ class ZendeskController extends BaseController {
 		{
 
 			$organisation = Organisation::find($row->id);
+			$log .= '<p><strong>Processing ' . $row->name . '</strong></p>';
 			
 			if (!$organisation) 
 			{
@@ -186,21 +177,29 @@ class ZendeskController extends BaseController {
 				$organisation->createdAt = $row->created_at;
 				$count++;
 				$organisation->save();
+				$log .= '<p>Created</p>';
 			}	
 
+			if ($updateTickets) $log .= $this->fetchTickets($row->id);
 
 		}
 
-		return '<p><strong>Organisations Created: </strong>' . $count . '</p>';		
+		$log .= '<p><strong>Organisations Created: </strong>' . $count . '</p>';
+
+		return $log;		
 		
 	}
 	
 	public function fetchTickets($organisationID = NULL)
 	{
 		
+		$log = NULL;
 		$url = NULL;
+		$urlPrefix = NULL;
+		$processed = 0;
+		$created = 0;
 		$page = 1;
-		$i = 0
+		$more = TRUE;
 		
 		if($organisationID != NULL)
 		{
@@ -209,32 +208,73 @@ class ZendeskController extends BaseController {
 
 		}
 		
-		while(($i == 0 && $page == 1) || ($i%100 != 0 && $i != 0))
+		while (($processed == 0 && $page == 1) || ($processed%100 == 0 && $processed != 0))
 		{
 		
 			$url = $urlPrefix . '/tickets.json?page=' . $page;
-			$data = $this->call($url,NULL,'GET'); 
+			$data = $this->call($url,NULL,'GET');
+
+			$log .= '<p><strong>Fetching tickets:</strong> ' . $url . '</p>';  
 		
 			
 			foreach($data->tickets as $row)
 			{
 
+				$processed++;
 				//Check to see if ticket already exists
-				$ticket = Tickets::find($row->id);
+				$ticket = Ticket::find($row->id);
 				
 				if(!$ticket) $ticket = new Ticket;
 				
 				//If the ticket exists and is closed, ignore
 				if($row->status == NULL || $ticket->status != 'closed')
 				{			
-				
-					
-				
+			
+					$ticket->id = $row->id ;
+					$row->organization_id == NULL ? $ticket->organisationID = '1' : $ticket->organisationID = $row->organization_id;
+					$ticket->requesterID = $row->requester_id;
+					$ticket->assigneeID = $row->assignee_id;
+					$ticket->jsonUrl = $row->url;
+					$ticket->url = 'https://' . $this->subdomain . '.zendesk.com/organizations/' . $row->id;
+					$ticket->type = $row->type;
+					$ticket->subject = $row->subject;
+					$ticket->description = $row->description;
+					$ticket->status = $row->status;
+					$row->custom_fields[1]->value == NULL ? $ticket->time = 0 : $ticket->time = $row->custom_fields[1]->value;
+					$ticket->createdAt = date('Y-m-d H:i:s', strtotime($row->created_at));
+					$ticket->updatedAt = date('Y-m-d H:i:s', strtotime($row->updated_at));
+
+					$ticket->save();	
+					$created++;				
 				}
 				
 			}
+
+			$page++;
+			//extend the prcoessing time to prevent a time-out.
+			set_time_limit(360);
 		
+		}
 		
+		$log .= '<p><strong>Tickets Updated:</strong> ' . $created . '</p>';		
+		$log .= '<p><strong>Total Tickets Processed:</strong> ' . $processed . '</p>';
+		
+		return $log;
+	
+	}
+
+	public function listTicketFields() 
+	{
+		
+		$data = $this->call('/ticket_fields',NULL,'GET');
+
+		foreach($data->ticket_fields as $row)
+		{
+			
+			var_dump($row);
+			echo '<br />';
+			
+			
 		}
 		
 		

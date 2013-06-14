@@ -52,6 +52,9 @@ Route::get('admin/update','AdminController@getUpdate');
 //Do the update work
 Route::post('admin/update','AdminController@postUpdate');
 
+//Show all open tickets
+Route::get('admin/report/open','AdminController@getOpenTickets');
+
 /*
 |--------------------------------------------------------------------------
 | Organisation Pages
@@ -62,6 +65,7 @@ Route::get('organisations', function(){
 	return Redirect::to('organisations/dashboard');
 	
 });
+
 //Dashboard
 Route::get('organisations/dashboard','OrganisationsController@index'); 
 
@@ -84,6 +88,26 @@ Route::post('login', 'AuthController@postLogin');
 Route::get('logout','AuthController@getLogout');
 
 //Zendesk functions
-Route::get('admin/zendesk/test','ZendeskController@fetchOrganisations');
+Route::group(array('before' => 'auth'), function()
+{
+
+	Route::get('admin/zendesk/updateUsers','ZendeskController@fetchUsers');
+	
+	Route::get('admin/zendesk/updateOrganisations','ZendeskController@fetchOrganisations');
+	
+	Route::get('admin/zendesk/updateTickets','ZendeskController@fetchTickets');
+	
+	Route::get('admin/zendesk/listTicketFields','ZendeskController@listTicketFields');
+	
+});
+
+//CRON jobs
+
+Route::get('cron/updateTickets','ZendeskController@fetchTickets');
+
+Route::get('cron/updateTickets','ZendeskController@fetchOrganisations');
+
+Route::get('cron/updateTickets','ZendeskController@fetchUsers');
+
 
 ?>

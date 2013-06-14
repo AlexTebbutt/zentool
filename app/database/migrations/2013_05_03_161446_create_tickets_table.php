@@ -15,16 +15,18 @@ class CreateTicketsTable extends Migration {
 		Schema::create('tickets', function(Blueprint $table)
 		{
 			$table->integer('id');
-			$table->integer('organisationID');
+			$table->integer('organisationID')->nullable();
 			$table->integer('requesterID');
-			$table->integer('assigneeID');
+			$table->integer('assigneeID')->nullable();
 			$table->string('jsonUrl')->nullable();
 			$table->string('url');
+			$table->string('type')->nullable();
 			$table->text('subject')->nullable();
-			$table->string('status');
+			$table->text('description')->nullable();
+			$table->string('status')->nullableI();;
 			$table->integer('time')->default(0);
 			$table->timestamp('createdAt');
-			$table->timestamp('updatedAt');
+			$table->timestamp('updatedAt')->nullable();
 		});
 	}
 
