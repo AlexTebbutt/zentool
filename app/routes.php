@@ -23,6 +23,8 @@ Route::get('/', 'SiteController@index');
 
 Route::get('login','AuthController@index');
 
+Route::get('admin/zendesk/newTickets','ZendeskController@updateTickets');
+
 /*
 |--------------------------------------------------------------------------
 | Admin Pages
@@ -54,6 +56,9 @@ Route::post('admin/update','AdminController@postUpdate');
 
 //Show all open tickets
 Route::get('admin/report/open','AdminController@getOpenTickets');
+
+//Show all closed tickets
+Route::get('admin/report/closed','AdminController@getClosedTickets');
 
 /*
 |--------------------------------------------------------------------------
@@ -105,9 +110,9 @@ Route::group(array('before' => 'auth'), function()
 
 Route::get('cron/updateTickets','ZendeskController@fetchTickets');
 
-Route::get('cron/updateTickets','ZendeskController@fetchOrganisations');
+Route::get('cron/updateOrganisations','ZendeskController@fetchOrganisations');
 
-Route::get('cron/updateTickets','ZendeskController@fetchUsers');
+Route::get('cron/updateUsers','ZendeskController@fetchUsers');
 
 
 ?>

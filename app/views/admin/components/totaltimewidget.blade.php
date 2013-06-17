@@ -2,7 +2,7 @@
 		
 	<h3>{{ $content->title }}</h3>
 	
-	<p class="time blue">{{ $content->time }}</p>
+	<p class="time time-bgd time-copy">{{ $content->time }}</p>
 
 </div>
 

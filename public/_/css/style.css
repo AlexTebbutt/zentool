@@ -113,8 +113,23 @@ td {
 }
 
 
-#report-summary {
+#page-title {
+	padding: 20px;
+	margin: 20px 0;
+}
+
+.month-heading, #report-summary, #page-title {
+	border-radius: 8px;
+	width: 100%;
+}
+
+#report-summary, #page-title {
 	background-color: rgba(232,232,232,1);
+}
+
+
+#report-summary {
+	height: 70px;
 }
 
 
@@ -127,19 +142,13 @@ td {
 /* 	background-color: rgba(223,255,233,1);	 */
 }
 
-.month-heading, #report-summary {
-	border-radius: 8px;
+.month-heading {
 	margin: 20px 0;
 	padding: 15px;	
-	width: 100%;
 }
 
 .month-heading:first-child {
 	margin: 10px 0 10px 0;
-}
-
-.right {
-	float: right;
 }
 
 .open-button {
@@ -162,6 +171,10 @@ td {
 
 .open-button a {
 	color: rgba(0,0,0,1);
+}
+
+.right {
+	float: right;
 }
 
 .widget {
@@ -221,11 +234,39 @@ h3 {
 	font-size: 17px;
 }
 
-#report-summary h2 {
-	font-size: 20px;
-	padding-bottom: 8px;
+#page-title h2, #report-summary h2 {
+	font-size: 20px;	
 }
 
+#report-summary h2 {
+	padding: 10px 0 0 20px;
+	text-align: left;
+}
+
+#report-summary h2 span {
+	font-size: 16px;
+	font-weight: normal;
+}
+
+#report-summary h3 {
+	height: 70px;
+	padding: 10px;	
+	text-align: left;
+}
+
+.rounded-end {
+	border-top-right-radius: 8px;
+	border-bottom-right-radius: 8px;
+	-webkit-border-top-right-radius: 8px;
+	-webkit-border-bottom-right-radius: 8px;
+	-moz-border-top-right-radius: 8px;
+	-moz-border-bottom-right-radius: 8px;	
+}
+
+#report-summary h3 span {
+	font-size: 16px;
+	font-weight: normal;
+}
 
 label {
 	display: block;
@@ -364,18 +405,29 @@ a {
 	margin-top: 12px;
 }
 	
-.blue {
-	color: rgba(155, 217, 243,1);
+.open-bgd, .time-bgd {
 	background-color: rgba(221,242,251,1);
 }
 
-.green {
-	color: rgba(255, 235, 133,1);
+.open-copy, .time-copy {
+	color: rgba(155, 217, 243,1);
+}
+
+.closed-bgd {
 	background-color: rgba(255, 250, 219,1);
-/*
-	color: rgba(163, 235, 186,1);
- 	background-color: rgba(223,255,233,1);
-*/
+}
+
+.closed-copy {
+	color: rgba(255, 235, 133,1);
+}
+
+
+.block {
+	display: block;
+}
+
+.inline-block {
+	display: inline-block;
 }
 
 /* Print styles!

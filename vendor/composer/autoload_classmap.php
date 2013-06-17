@@ -22,6 +22,7 @@ return array(
     'ClassPreloader\\Parser\\FileVisitor' => $vendorDir . '/classpreloader/classpreloader/src/ClassPreloader/Parser/FileVisitor.php',
     'ClassPreloader\\Parser\\NodeTraverser' => $vendorDir . '/classpreloader/classpreloader/src/ClassPreloader/Parser/NodeTraverser.php',
     'CreateHistoryTable' => $baseDir . '/app/database/migrations/2013_05_03_162052_create_history_table.php',
+    'CreateOptionsTable' => $baseDir . '/app/database/migrations/2013_06_17_135513_create_options_table.php',
     'CreateOrganisationsTable' => $baseDir . '/app/database/migrations/2013_05_03_161747_create_organisations_table.php',
     'CreateTicketsTable' => $baseDir . '/app/database/migrations/2013_05_03_161446_create_tickets_table.php',
     'CreateUsersTable' => $baseDir . '/app/database/migrations/2013_05_10_134355_create_users_table.php',
@@ -638,6 +639,7 @@ return array(
     'Monolog\\Processor\\UidProcessor' => $vendorDir . '/monolog/monolog/src/Monolog/Processor/UidProcessor.php',
     'Monolog\\Processor\\WebProcessor' => $vendorDir . '/monolog/monolog/src/Monolog/Processor/WebProcessor.php',
     'Normalizer' => $vendorDir . '/patchwork/utf8/class/Normalizer.php',
+    'Options' => $baseDir . '/app/database/migrations/2013_06_17_135513_create_options_table.php',
     'Organisation' => $baseDir . '/app/models/Organisation.php',
     'OrganisationsController' => $baseDir . '/app/controllers/OrganisationsController.php',
     'OrganisationsTableSeeder' => $baseDir . '/app/database/seeds/OrganisationsTableSeeder.php',
@@ -1555,4 +1557,7 @@ return array(
     'Whoops\\Provider\\Zend\\ExceptionStrategy' => $vendorDir . '/filp/whoops/src/Whoops/Provider/Zend/ExceptionStrategy.php',
     'Whoops\\Provider\\Zend\\RouteNotFoundStrategy' => $vendorDir . '/filp/whoops/src/Whoops/Provider/Zend/RouteNotFoundStrategy.php',
     'Whoops\\Run' => $vendorDir . '/filp/whoops/src/Whoops/Run.php',
+    'Zendesk' => $baseDir . '/app/models/Zendesk.php',
+    'ZendeskController' => $baseDir . '/app/controllers/ZendeskController.php',
+    'ZendeskTableSeeder' => $baseDir . '/app/database/seeds/ZendeskTableSeeder.php',
 );

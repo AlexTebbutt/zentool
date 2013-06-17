@@ -22,7 +22,7 @@ class ZendeskController extends BaseController {
 		//$this->beforeFilter('admin-auth');
 
 		//Get the Zendesk API account details and populate the variables
-		$zendeskAccount = Zendesk::find(1);
+		$zendeskAccount = Option::find(1)->getOptions();
 		$this->api_key = $zendeskAccount->apikey;
 		$this->user = $zendeskAccount->user;
 		$this->base = 'https://' . $zendeskAccount->subdomain . '.zendesk.com/api/v2';
@@ -235,7 +235,7 @@ class ZendeskController extends BaseController {
 					$ticket->requesterID = $row->requester_id;
 					$ticket->assigneeID = $row->assignee_id;
 					$ticket->jsonUrl = $row->url;
-					$ticket->url = 'https://' . $this->subdomain . '.zendesk.com/organizations/' . $row->id;
+					$ticket->url = 'https://' . $this->subdomain . '.zendesk.com/tickets/' . $row->id;
 					$ticket->type = $row->type;
 					$ticket->subject = $row->subject;
 					$ticket->description = $row->description;
@@ -261,6 +261,44 @@ class ZendeskController extends BaseController {
 		
 		return $log;
 	
+	}
+	
+	
+	public function updateTickets()
+	{
+	
+		$count = 0;
+		$log = NULL;
+			
+		//Get and process only open tickets
+		$tickets = Ticket::where(function($query)
+												{
+												 	$query->where('status','!=','closed');
+												 	$query->Where('status','!=','solved');
+												})->get();
+												
+		foreach ($tickets as $ticket)
+		{
+			
+			$data = $this->call('/tickets/' . $ticket->id,NULL,'GET');
+			
+			$ticket->type = $data->ticket->type;
+			$ticket->status = $data->ticket->status;
+			$data->ticket->custom_fields[1]->value == NULL ? $ticket->time = 0 : $ticket->time = $data->ticket->custom_fields[1]->value;
+			$ticket->updatedAt = date('Y-m-d H:i:s', strtotime($data->ticket->updated_at));
+			$ticket->save();		
+			
+			//echo $data->ticket->id . '<br /><br />';
+			$log .= '<p><strong>Processing ticket:</strong> ' . $data->ticket->id . '</p>';
+			$count++;
+			
+		}
+
+		$log .= '<p><strong>Total Open Tickets Processed:</strong> ' . $count . '</p>';
+		
+		return $log;
+		
+		
 	}
 
 	public function listTicketFields() 

@@ -16,11 +16,17 @@ class AdminController extends ZendeskController {
 			$this->beforeFilter('admin-auth');
 			
 		}
+		
+		
+		
+		
 		/**
-     * Display a listing of the resource.
+     * Index page: This is the main Dashboard.
+     * Widget layouts are stored in views > admin > components
      *
-     * @return Response
+     * @return Built view
      */
+   
     public function index()
     {
 			//Set up vars
@@ -111,7 +117,7 @@ class AdminController extends ZendeskController {
 																						})
 																					->sum('time');
 				
-				$content->totalTime = $this->formatTime($content->totalTime);																	
+				$content->totalTime = $this->formatTime($content->totalTime,'short');																	
 				$data .= View::make('admin.components.orgwidget', compact('content'));
 				
 			}
@@ -121,6 +127,28 @@ class AdminController extends ZendeskController {
 
     }
 
+
+		public function optionsTest($key)
+		{
+			
+/*
+			$option = Option::where('name',$key);
+			$options = $option->getOptions();
+	
+			
+			
+			echo $options->apikey . '<br />';
+*/
+
+
+		}
+		
+
+		/**
+     * Initial report view: Generate the form first shown to the user
+     *
+     * @return Built view
+     */
 		public function getReport()
 		{
 			//Set up any vars
@@ -136,7 +164,12 @@ class AdminController extends ZendeskController {
 	  	$this->layout->content = View::make('reports.adminShow', array('organisation' => $organisation, 'report' => $report, 'data' => $data));		
 			
 		}
-		
+
+		/**
+     * Processed report view: Take the user inputs and generate the report
+     *
+     * @return Built view
+     */		
 		public function postReport($id = NULL)
 		{
 
@@ -159,8 +192,13 @@ class AdminController extends ZendeskController {
 			$report->dateTo = date('d-m-Y');
 			$result = Organisation::where('id', $report->orgID)->first(array('name'));
 			$report->orgName = $result->name;
+			$report->openTime = 0;
+			$report->openCount = 0;
+
 			$data = NULL;
 			$headings = new stdClass();
+			$headings->totalTime = 0;
+			
 			
 			//Get organisations for drop down
 			$organisation = Organisation::all();
@@ -176,6 +214,9 @@ class AdminController extends ZendeskController {
 																 	$query->Where('status','!=','solved');
 																})
 																->count();
+
+				$report->openCount = $headings->count;
+
 				$tickets = Ticket::where('organisationID', $report->orgID)
 													->where(function($query)
 													{
@@ -187,22 +228,21 @@ class AdminController extends ZendeskController {
 													
 				if ($headings->count > 0)
 				{
-					$headings->totalTime = $this->formatTime(Ticket::where('organisationID', $report->orgID)
+					$headings->totalTime = Ticket::where('organisationID', $report->orgID)
 																													->where(function($query)
 																													{
 																													 	$query->where('status','!=','closed');
 																													 	$query->Where('status','!=','solved');
 																													})
-																													->sum('time'));
-				} else {
-					$headings->totalTime = '0 Hours 0 Minutes';
+																													->sum('time');
 				}
 				
+				$report->openTime = $headings->totalTime;
+				$headings->totalTime = $this->formatTime($headings->totalTime);
 				$headings->classTitle = 'open-summary';				
 				$headings->updateTitle = 'Last Update On';
 				$headings->reportTitle = $headings->count . ' Ticket(s) open ' . ' currently taking ' . $headings->totalTime;
 				$data .= View::make('reports.components.tickets', compact('tickets','headings'));
-			
 			}
 
 			//Get all closed tickets within the date range and generate monthly views
@@ -318,8 +358,8 @@ class AdminController extends ZendeskController {
 			
 			}
 		
-			//Get total time
-			$report->totalTime = $this->formatTime(Ticket::where('organisationID', $report->orgID)
+			//Get total closed time
+			$report->closedTime = Ticket::where('organisationID', $report->orgID)
 																										->where('updatedAt','>=',$reportDateFrom)
 																										->where('updatedAt','<=',$reportDateTo . ' 23:59:59')
 																										->where(function($query)
@@ -329,11 +369,16 @@ class AdminController extends ZendeskController {
 																											$query->orWhere('status','=','solved');
 																											
 																										})
-																										->sum('time'));
+																										->sum('time');
 			
+			
+			//Total Time Spent
+			$report->totalTime = $this->formatTime(($report->openTime + $report->closedTime));
+			$report->openTime = $this->formatTime($report->openTime,'short');
+			$report->closedTime = $this->formatTime($report->closedTime,'short');
 			
 			//Get total ticket count
-			$report->totalCount = Ticket::where('organisationID', $report->orgID)->where('updatedAt','>=',$reportDateFrom)->where('updatedAt','<=',$reportDateTo . ' 23:59:59')
+			$report->closedCount = Ticket::where('organisationID', $report->orgID)->where('updatedAt','>=',$reportDateFrom)->where('updatedAt','<=',$reportDateTo . ' 23:59:59')
 																		->where(function($query)
 																		{
 																			$query->where('status','=','closed');
@@ -346,6 +391,7 @@ class AdminController extends ZendeskController {
 					
 		}
 		
+
 		public function getUpdate() 
 		{
 			
@@ -353,6 +399,7 @@ class AdminController extends ZendeskController {
 			
 		}
 		
+
 		public function postUpdate() 
 		{
 		
@@ -390,16 +437,31 @@ class AdminController extends ZendeskController {
 		
 		public function getOpenTickets()
 		{
+		
+			$data = NULL;
+			$headings = new stdClass();
+			$headings->totalTime = 0;
 			
 			//Get all open tickets ordered by organistion and then date
-/*
 			$headings->count = Ticket::where(function($query)
 																{
 																 	$query->where('status','!=','closed');
 																 	$query->Where('status','!=','solved');
 																})
 																->count();
+																
+			if ($headings->count > 0)
+			{
+				$headings->totalTime = Ticket::where(function($query)
+																				{
+																				 	$query->where('status','!=','closed');
+																				 	$query->Where('status','!=','solved');
+																				})
+																				->sum('time');
+			}	
 			
+			$headings->totalTime = $this->formatTime($headings->totalTime);
+					
 			$tickets = Ticket::where(function($query)
 												{
 												 	$query->where('status','!=','closed');
@@ -407,27 +469,72 @@ class AdminController extends ZendeskController {
 												})
 												->orderBy('organisationID')
 												->orderBy('updatedAt')
-												->get();	
-*/			
+												->get();				
 			
-		
+			$headings->reportTitle = $headings->count . ' Ticket(s) open ' . ' currently taking ' . $headings->totalTime;		
+				$headings->classTitle = 'open-summary';				
+				$headings->updateTitle = 'Last Update On';
+			
+			$data = View::make('reports.components.tickets', compact('tickets','headings'));
+			
 			//Generate view
-			$this->layout->content = View::make('reports.adminOpen');
+			$this->layout->content = View::make('reports.adminOpen', array('data' => $data));
 			
 		}
+
+		public function getClosedTickets()
+		{
 		
+			$data = NULL;
+			$headings = new stdClass();
+			$headings->totalTime = 0;
+			
+			//Get all open tickets ordered by organistion and then date
+			$headings->count = Ticket::where(function($query)
+																{
+																 	$query->where('status','=','closed');
+																 	$query->orWhere('status','=','solved');
+																})
+																->count();
+																
+			if ($headings->count > 0)
+			{
+				$headings->totalTime = Ticket::where(function($query)
+																				{
+																				 	$query->where('status','!=','closed');
+																				 	$query->Where('status','!=','solved');
+																				})
+																				->sum('time');
+			}	
+			
+			$headings->totalTime = $this->formatTime($headings->totalTime);
+					
+			$tickets = Ticket::where(function($query)
+												{
+												 	$query->where('status','!=','closed');
+												 	$query->Where('status','!=','solved');
+												})
+												->orderBy('organisationID')
+												->orderBy('updatedAt')
+												->get();				
+			
+			$headings->reportTitle = $headings->count . ' Ticket(s) closed ' . ' taking ' . $headings->totalTime;		
+				$headings->classTitle = 'closed-summary';				
+				$headings->updateTitle = 'Closed On';
+			
+			$data = View::make('reports.components.tickets', compact('tickets','headings'));
+			
+			//Generate view
+			$this->layout->content = View::make('reports.adminClosed', array('data' => $data));
+			
+		}		
 		
 		private function formatTime($time, $format = 'long')
 		{
 
 			$neg = '';
-
-			if ($time == 0)
-			{
-
-				return '0 Hours 0 Minutes';
-
-			}	elseif ($time < 0) 
+			
+			if ($time < 0) 
 			{
 				
 				$neg = '-';
@@ -435,13 +542,23 @@ class AdminController extends ZendeskController {
 				
 			}
 		
-			if ($format == 'long')
+			if ($format == 'long' && $time > 0)
 			{
+
 				return $neg . floor($time/60) . ' Hours ' . $neg . $time%60 . ' Minutes';
-			} 
-			elseif ($format == 'short')
-			{
-				return $neg . floor($time/60) . ' H ' . $neg . $time%60 . ' M';
+
+			} elseif ($format == 'long' && $time == 0) {
+				
+				return '0 Hours 0 Minutes';	
+	
+			}	elseif ($format == 'short' && $time > 0)	{
+
+				return $neg . floor($time/60) . 'h ' . $neg . $time%60 . 'm';
+
+			} elseif ($format == 'short' && $time == 0) {
+				
+				return '0h 0m';
+								
 			}
 			
 		}

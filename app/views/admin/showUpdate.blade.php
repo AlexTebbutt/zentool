@@ -1,6 +1,6 @@
 @section('content')
 
-<div id="report-summary" class="center">
+<div id="page-title" class="center">
 	
 	<h2>Process Updates - Select the items you want to update.</h2>
 
@@ -12,7 +12,7 @@
 
 {{ Form::checkbox('update-tickets', 'update-tickets', true) }}
 
-{{ Form::label('update-tickets', 'Update tickets', array('class' => 'block')) }}
+{{ Form::label('update-tickets', 'Update tickets', array('class' => 'inline-block')) }}
 
 </div>
 
@@ -20,7 +20,7 @@
 
 {{ Form::checkbox('update-organisations', 'update-organisations', false) }}
 
-{{ Form::label('update-organisations', 'Update organisations', array('class' => 'block')) }}
+{{ Form::label('update-organisations', 'Update organisations', array('class' => 'inline-block')) }}
 
 </div>
 
@@ -28,7 +28,7 @@
 
 {{ Form::checkbox('update-users', 'update-users', false) }}
 
-{{ Form::label('update-users', 'Update users', array('class' => 'block')) }}
+{{ Form::label('update-users', 'Update users', array('class' => 'inline-block')) }}
 
 </div>
 

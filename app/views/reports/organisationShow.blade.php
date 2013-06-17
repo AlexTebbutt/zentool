@@ -38,7 +38,7 @@
 
 {{ Form::checkbox('hide-zero', 'hide', true) }}
 
-{{ Form::label('hide-zero', 'Hide months with no tickets', array('class' => 'block')) }}
+{{ Form::label('hide-zero', 'Hide months with no tickets', array('class' => 'inline-block')) }}
 
 </div>
 
@@ -46,7 +46,7 @@
 
 {{ Form::checkbox('show-open', 'show', true) }}
 
-{{ Form::label('show-open', 'Show all open tickets', array('class' => 'block')) }}
+{{ Form::label('show-open', 'Show all open tickets', array('class' => 'inline-block')) }}
 
 </div>
 

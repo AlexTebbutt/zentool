@@ -72,7 +72,7 @@
 @endif
 
 
-{{ Form::label('hide-zero', 'Hide months with no tickets', array('class' => 'block')) }}
+{{ Form::label('hide-zero', 'Hide months with no tickets', array('class' => 'inline-block')) }}
 
 </div>
 
@@ -89,7 +89,7 @@
 @endif
 
 
-{{ Form::label('show-open', 'Show all open tickets', array('class' => 'block')) }}
+{{ Form::label('show-open', 'Show all open tickets', array('class' => 'inline-block')) }}
 
 </div>
 
@@ -99,9 +99,13 @@
 
 <div id="report-summary" class="center">
 	
-	<h2>Report Summary For {{ $report->orgName }} generated on <?php echo date('d F Y'); ?></h2>
+	<h2 class="left">{{ $report->orgName }} Report Built On: <?php echo date('d F Y'); ?><span class="block">For Period {{ $report->dateFrom }} to {{ $report->dateTo }}</span></h2>
+
+	<h3 class="right open-bgd rounded-end">Total time:<span class="block">{{ $report->totalTime }}</span></h3>
 	
-	<h3>{{ $report->totalCount }} Ticket(s) closed in total for period {{ $report->dateFrom }} to {{ $report->dateTo }} taking {{ $report->totalTime }}</h3>
+	<h3 class="right closed-bgd">Tickets Closed: {{ $report->closedCount }}<span class="block">Taking: {{ $report->closedTime }}</span></h3>
+
+	<h3 class="right open-bgd">Tickets Open: {{ $report->openCount }}<span class="block">Taking: {{ $report->openTime }}</span></h3>
 
 </div>
 

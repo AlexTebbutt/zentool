@@ -2,7 +2,7 @@
 
 <div id="page-title" class="center">
 	
-	<h2>All current open tickets</h2>
+	<h2>All Tickets closed for the month of <?php echo date('F'); ?></h2>
 
 </div>
 
