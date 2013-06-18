@@ -1,6 +1,6 @@
 @section('content')
 
-<div id="report-summary" class="center">
+<div id="page-title" class="center">
 	
 	<h2>{{ $content->name }} Dashboard</h2>
 

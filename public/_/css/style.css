@@ -234,11 +234,13 @@ h3 {
 	font-size: 17px;
 }
 
-#page-title h2, #report-summary h2 {
+#page-title h2 {
 	font-size: 20px;	
 }
 
+
 #report-summary h2 {
+	font-size: 18px;
 	padding: 10px 0 0 20px;
 	text-align: left;
 }

@@ -120,8 +120,6 @@ class OrganisationsController extends BaseController {
 	public function postReport()
 	{
 		$report = new stdClass();
-		$headings = new stdClass();		
-		$data = NULL;
 		
   	$report->orgID = Session::get('organisationID');
   	$organisation = Organisation::find($report->orgID);
@@ -132,6 +130,12 @@ class OrganisationsController extends BaseController {
 		$report->dateTo = date('d-m-Y');
 		$result = Organisation::where('id', $report->orgID)->first(array('name'));
 		$report->orgName = $result->name;
+		$report->openTime = 0;
+		$report->openCount = 0;
+
+		$headings = new stdClass();		
+		$data = NULL;
+		$headings->totalTime = 0;
 
 		//Get open (status != 'closed') tickets
 		if($report->showOpen == 'show')
@@ -144,6 +148,9 @@ class OrganisationsController extends BaseController {
 															 	$query->Where('status','!=','solved');
 															})
 															->count();
+			
+			$report->openCount = $headings->count;
+			
 			$tickets = Ticket::where('organisationID', $report->orgID)
 												->where(function($query)
 												{
@@ -155,17 +162,18 @@ class OrganisationsController extends BaseController {
 												
 			if ($headings->count > 0)
 			{
-				$headings->totalTime = $this->formatTime(Ticket::where('organisationID', $report->orgID)
+				$headings->totalTime = Ticket::where('organisationID', $report->orgID)
 																												->where(function($query)
 																												{
 																												 	$query->where('status','!=','closed');
 																												 	$query->Where('status','!=','solved');
 																												})
-																												->sum('time'));
-			} else {
-				$headings->totalTime = '0 Hours 0 Minutes';
+																												->sum('time');
 			}
 			
+			
+			$report->openTime = $headings->totalTime;
+			$headings->totalTime = $this->formatTime($headings->totalTime);
 			$headings->classTitle = 'open-summary';				
 			$headings->updateTitle = 'Last Update On';
 			$headings->reportTitle = $headings->count . ' Ticket(s) open ' . ' currently taking ' . $headings->totalTime;
@@ -282,7 +290,7 @@ class OrganisationsController extends BaseController {
 		}
 	
 		//Get total time
-		$report->totalTime = $this->formatTime(Ticket::where('organisationID', $report->orgID)
+		$report->closedTime = Ticket::where('organisationID', $report->orgID)
 																									->where('updatedAt','>=',$reportDateFrom)
 																									->where('updatedAt','<=',$reportDateTo . ' 23:59:59')
 																									->where(function($query)
@@ -292,11 +300,17 @@ class OrganisationsController extends BaseController {
 																										$query->orWhere('status','=','solved');
 																										
 																									})
-																									->sum('time'));
+																									->sum('time');
 		
 		
+
+		//Total Time Spent
+		$report->totalTime = $this->formatTime(($report->openTime + $report->closedTime));
+		$report->openTime = $this->formatTime($report->openTime,'short');
+		$report->closedTime = $this->formatTime($report->closedTime,'short');
+
 		//Get total ticket count
-		$report->totalCount = Ticket::where('organisationID', $report->orgID)->where('updatedAt','>=',$reportDateFrom)->where('updatedAt','<=',$reportDateTo . ' 23:59:59')
+		$report->closedCount = Ticket::where('organisationID', $report->orgID)->where('updatedAt','>=',$reportDateFrom)->where('updatedAt','<=',$reportDateTo . ' 23:59:59')
 																	->where(function($query)
 																	{
 																		$query->where('status','=','closed');
