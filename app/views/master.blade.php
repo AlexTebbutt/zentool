@@ -119,6 +119,20 @@
 					
 					<li><a href="{{ URL::to('admin/update') }}">Update</a></li>
 					
+					<li><a href="">Manage</a>
+					
+						<ul>
+							
+							<li><a href="{{ URL::to('admin/manage/settings') }}">Settings</a></li>
+
+							<li><a href="{{ URL::to('admin/manage/organisations') }}">Organisations</a></li>
+							
+							<li><a href="{{ URL::to('admin/manage/users') }}">Users</a></li>
+												
+						</ul>
+						
+					</li>
+					
 					@endif
 					
 					@endif

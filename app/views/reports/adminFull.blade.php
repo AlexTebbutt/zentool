@@ -31,7 +31,7 @@
 @endforeach
 </select>
 
-{{ Form::label('report-type', 'Organisation') }}
+{{ Form::label('report-type', 'Report Type') }}
 
 {{ Form::select('report-type', array('all' => 'Full - All tickets', 'date-range' => 'By Date Range'), Input::get('report-type')) }}
 
@@ -43,7 +43,7 @@
 
 @else
 
-{{ Form::text('date-from', '01-01-2013') }}
+{{ Form::text('date-from', date('01-m-Y')) }}
 
 @endif
 

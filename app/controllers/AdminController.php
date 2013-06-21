@@ -17,9 +17,6 @@ class AdminController extends ZendeskController {
 			
 		}
 		
-		
-		
-		
 		/**
      * Index page: This is the main Dashboard.
      * Widget layouts are stored in views > admin > components
@@ -42,7 +39,7 @@ class AdminController extends ZendeskController {
 																$query->where('status', '!=', 'solved');
 															})
 															->count();
-			$data .= View::make('admin.components.totalopenwidget', compact('content'));
+			$data .= View::make('admin.widgets.totalopenwidget', compact('content'));
 
 			$content->title = "Total Closed Tickets";
 			$content->count = Ticket::where(function($query)
@@ -57,11 +54,11 @@ class AdminController extends ZendeskController {
 												})
 												->count();
 
-			$data .= View::make('admin.components.totalclosedwidget', compact('content'));
+			$data .= View::make('admin.widgets.totalclosedwidget', compact('content'));
 			
 			$content->title = "Total Time Spent";
 			$content->time = $this->formatTime(Ticket::where('updatedAt','>=',date('Y-m-01 00:00:00'))->where('updatedAt','<=',date('Y-m-d 23:59:59'))->sum('time'),'short');
-			$data .= View::make('admin.components.totaltimewidget', compact('content'));
+			$data .= View::make('admin.widgets.totaltimewidget', compact('content'));
 			
 			//Loop through organistaions
 			foreach($organisation as $org)
@@ -118,7 +115,7 @@ class AdminController extends ZendeskController {
 																					->sum('time');
 				
 				$content->totalTime = $this->formatTime($content->totalTime,'short');																	
-				$data .= View::make('admin.components.orgwidget', compact('content'));
+				$data .= View::make('admin.widgets.orgwidget', compact('content'));
 				
 			}
 		
@@ -529,6 +526,19 @@ class AdminController extends ZendeskController {
 			
 		}		
 		
+
+		public function getManageUsers()
+		{
+			
+			$users = User::all();
+			$organisation = Organisation::all();
+			
+			$this->layout->content = View::make('admin.manage.users',compact('users','organisation'));
+			
+			
+		}
+
+
 		private function formatTime($time, $format = 'long')
 		{
 

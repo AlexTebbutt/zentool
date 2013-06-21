@@ -54,6 +54,14 @@ Route::get('admin/update','AdminController@getUpdate');
 //Do the update work
 Route::post('admin/update','AdminController@postUpdate');
 
+//Manage Users form
+Route::get('admin/manage/users','AdminController@getManageUsers');
+
+//Update Users
+Route::post('admin/manage/users','AdminController@postManageUsers');
+
+
+
 //Show all open tickets
 Route::get('admin/report/open','AdminController@getOpenTickets');
 

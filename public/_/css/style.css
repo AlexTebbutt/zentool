@@ -54,14 +54,33 @@ footer {
 	width: 100%;
 }
 
-li {
-	display: inline;
-	padding-right: 10px;
+/* Tables
+--------- */
+.muser {
+	margin-bottom: 20px;
 }
 
-li:last-child {
-	padding-right: 0;
+.muser label {
+	padding-bottom: 10px;
+	text-align: left;
 }
+
+.muser input[type=submit] {
+	font-size: 18px;
+	float: right;
+	line-height: 4px;
+	padding: 9px 19px 14px 19px;
+}
+
+.muser td, .muser th, .muser input[type=text], .muser select  {
+	margin-right: 12px;
+	width: 150px;
+}
+
+.muser td:last-child, .muser th:last-child {
+	margin-right: 0;
+}
+
 
 td {
 	height: 20px;
@@ -112,13 +131,23 @@ td {
 	max-width: 300px;
 }
 
+.manage-form {
+	width: 100%;
+}
+
 
 #page-title {
 	padding: 20px;
 	margin: 20px 0;
 }
 
-.month-heading, #report-summary, #page-title {
+.section-title {
+	background-color: rgba(221,252,214,1);
+	padding: 15px;
+	margin: 20px 0;
+}
+
+.month-heading, #report-summary, #page-title, .section-title {
 	border-radius: 8px;
 	width: 100%;
 }
@@ -216,6 +245,51 @@ body, .organisation-widget p.count span {
 	font-family: 'Open Sans', sans-serif;
 }
 
+header h1 {
+	float: left;
+}
+
+/* Nav 
+------ */
+header nav {
+	float: right;
+}
+
+nav ul {
+	position: relative;
+}
+
+nav ul li {
+	float: left;
+	padding-right: 10px;
+}
+
+nav ul li:last-child {
+	padding-right: 0;
+}
+
+nav ul ul {
+	background-color: rgb(0,0,0);
+	display: none;
+	margin-left: -5px;
+	position: absolute;
+}
+
+nav ul ul li {
+	padding: 5px;
+}
+
+nav ul li:hover > ul {
+	display: block;
+}
+
+nav a {
+	color: rgb(255,255,255);
+}
+
+nav a:hover {
+	color: rgb(249, 159, 201);
+}
 
 .count {
 	font-family: 'Oswald', sans-serif;
@@ -238,6 +312,9 @@ h3 {
 	font-size: 20px;	
 }
 
+.section-title h3 {
+	font-size: 18px;	
+}
 
 #report-summary h2 {
 	font-size: 18px;
@@ -278,21 +355,6 @@ label {
 	margin-bottom: 5px;
 }
 
-header h1 {
-	float: left;
-}
-
-header nav {
-	float: right;
-}
-
-nav a {
-	color: rgb(255,255,255);
-}
-
-nav a:hover {
-	color: rgb(249, 159, 201);
-}
 
 select, input[type=text], input[type=password] {
 	background-color: rgb(255,255,255);
